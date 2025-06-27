@@ -321,7 +321,7 @@ ApplicationWindow {
 
     CSLOLTools {
         id: cslolTools
-        onInitialized: function(mods, profiles, profileName, profileMods) {
+        onInitialized: function(mods, profiles, profileName, profileMods, folders) {
             cslolToolBar.profilesModel = profiles
             cslolToolBar.profilesCurrentIndex = 0
             for(let i in profiles) {
@@ -330,9 +330,7 @@ ApplicationWindow {
                     break
                 }
             }
-            for(let fileName in mods) {
-                cslolModsView.addMod(fileName, mods[fileName], fileName in profileMods)
-            }
+            cslolModsView.initializeMods(mods, profileMods, folders)
             if(checkGamePath() && settings.enableAutoRun) {
                 cslolToolBar.saveProfileAndRun(true)
             }
@@ -410,5 +408,7 @@ ApplicationWindow {
         firstTick = true;
         cslolTools.init()
         cslolDialogUpdate.checkForUpdates()
+    }
+}
     }
 }

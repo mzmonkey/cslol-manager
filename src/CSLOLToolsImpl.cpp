@@ -312,9 +312,28 @@ void CSLOLToolsImpl::init() {
 
         setStatus("Load mods");
         QJsonObject mods;
+        QJsonObject folders;
+        QMap<QString, QStringList> folderMods;
+        
         for (auto name : modList()) {
             auto info = modInfoRead(name);
             mods.insert(name, info);
+            
+            // Extract folder path from mod name
+            QFileInfo modFileInfo(prog_ + "/installed/" + name);
+            QString parentFolder = modFileInfo.dir().dirName();
+            if (parentFolder != "installed") {
+                QString folderPath = QDir(prog_ + "/installed").relativeFilePath(modFileInfo.dir().path());
+                folderMods[folderPath].append(name);
+            }
+        }
+        
+        // Build folder structure
+        for (auto it = folderMods.begin(); it != folderMods.end(); ++it) {
+            QJsonObject folderInfo;
+            folderInfo["mods"] = QJsonArray::fromStringList(it.value());
+            folderInfo["expanded"] = false;
+            folders.insert(it.key(), folderInfo);
         }
 
         setStatus("Load profiles");
@@ -331,7 +350,7 @@ void CSLOLToolsImpl::init() {
         setStatus("Run diag");
         this->runDiagInternal(true);
 
-        emit initialized(mods, QJsonArray::fromStringList(profiles), profileName, profileMods);
+        emit initialized(mods, QJsonArray::fromStringList(profiles), profileName, profileMods, folders);
 
         setState(CSLOLState::StateIdle);
     }

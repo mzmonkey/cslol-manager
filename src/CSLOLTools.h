@@ -32,7 +32,7 @@ signals:
     void blacklistChanged(bool blacklist);
     void ignorebadChanged(bool ignorebad);
 
-    void initialized(QJsonObject mods, QJsonArray profiles, QString profileName, QJsonObject profileMods);
+    void initialized(QJsonObject mods, QJsonArray profiles, QString profileName, QJsonObject profileMods, QJsonObject folders);
     void modDeleted(QString name);
     void installedMod(QString fileName, QJsonObject infoData);
     void profileSaved(QString name, QJsonObject mods);
